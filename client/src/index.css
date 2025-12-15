@@ -1,0 +1,75 @@
+:root {
+  /* Colors */
+  /* Colors */
+  --primary-gradient: linear-gradient(135deg, #0284c7 0%, #10b981 100%);
+  --primary-color: #0284c7;
+  --secondary-color: #10b981;
+  --accent-color: #f59e0b;
+  /* Changed accent to Amber to contrast with Blue/Green */
+
+  --bg-body: #f8f9fa;
+  --bg-card: #ffffff;
+
+  --text-primary: #1a202c;
+  --text-secondary: #4a5568;
+  --text-light: #a0aec0;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+  /* Spacing & Radius */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+
+  /* Typography */
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  line-height: 1.6;
+  font-weight: 400;
+
+  color-scheme: light;
+  color: var(--text-primary);
+  background-color: var(--bg-body);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  /* Strict overflow prevention */
+  width: 100%;
+  /* Prevent 100vw scrollbar issue */
+}
+
+body {
+  display: block;
+  min-width: 320px;
+  min-height: 100vh;
+  position: relative;
+  /* Ensure it contains absolute children correctly */
+}
+
+#root {
+  width: 100%;
+  overflow-x: hidden;
+  /* Third layer of protection */
+}
+
+#root {
+  width: 100%;
+}

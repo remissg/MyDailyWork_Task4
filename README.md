@@ -193,5 +193,5 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 <div align="center">
   <br />
-  <p>Made with ❤️ by <a href="https://github.com/yourusername">Joydip Maiti</a></p>
+  <p>Made with ❤️ by <a href="https://github.com/remissg">Joydip Maiti</a></p>
 </div>

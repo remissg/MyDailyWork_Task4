@@ -2,10 +2,12 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { productService } from '../services/productService';
+import { useToast } from '../context/ToastContext';
 import './AdminDashboard.css';
 
 const AdminDashboard = () => {
     const { user } = useAuth();
+    const { showToast } = useToast();
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const [activeTab, setActiveTab] = useState('overview');
@@ -116,7 +118,7 @@ const AdminDashboard = () => {
             setProducts(data.products || []);
         } catch (error) {
             console.error('Failed to fetch products:', error);
-            alert('Error fetching products: ' + error.message);
+            showToast('Error fetching products: ' + error.message, 'error');
         } finally {
             setLoading(false);
         }
@@ -160,12 +162,12 @@ const AdminDashboard = () => {
             if (!data.success) {
                 // Revert if failed
                 fetchOrders();
-                alert(data.message || 'Failed to update status');
+                showToast(data.message || 'Failed to update status', 'error');
             }
         } catch (error) {
             console.error('Error updating status:', error);
             fetchOrders();
-            alert('Error updating status');
+            showToast('Error updating status', 'error');
         }
     };
 
@@ -185,15 +187,15 @@ const AdminDashboard = () => {
             const data = await response.json();
 
             if (data.success) {
-                alert('Payment marked as completed');
+                showToast('Payment marked as completed', 'success');
                 fetchOrders();
                 setShowOrderModal(false);
             } else {
-                alert(data.message || 'Failed to update payment');
+                showToast(data.message || 'Failed to update payment', 'error');
             }
         } catch (error) {
             console.error('Error updating payment:', error);
-            alert('Error updating payment');
+            showToast('Error updating payment', 'error');
         }
     };
 
@@ -209,7 +211,7 @@ const AdminDashboard = () => {
             setCarts(data.carts || []);
         } catch (error) {
             console.error('Failed to fetch carts:', error);
-            alert('Error fetching carts');
+            showToast('Error fetching carts', 'error');
         } finally {
             setLoading(false);
         }
@@ -261,11 +263,11 @@ const AdminDashboard = () => {
             if (editingProduct) {
                 // Update product
                 await productService.updateProduct(editingProduct._id, productData);
-                alert('Product updated successfully!');
+                showToast('Product updated successfully!', 'success');
             } else {
                 // Create product
                 await productService.createProduct(productData);
-                alert('Product created successfully!');
+                showToast('Product created successfully!', 'success');
             }
 
             setShowProductForm(false);
@@ -273,7 +275,7 @@ const AdminDashboard = () => {
             resetForm();
             fetchProducts();
         } catch (error) {
-            alert(error.response?.data?.message || 'Failed to save product');
+            showToast(error.response?.data?.message || 'Failed to save product', 'error');
         } finally {
             setLoading(false);
         }
@@ -299,10 +301,10 @@ const AdminDashboard = () => {
 
         try {
             await productService.deleteProduct(productId);
-            alert('Product deleted successfully!');
+            showToast('Product deleted successfully!', 'success');
             fetchProducts();
         } catch (error) {
-            alert('Failed to delete product');
+            showToast('Failed to delete product', 'error');
         }
     };
 

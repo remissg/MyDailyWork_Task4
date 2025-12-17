@@ -13,6 +13,10 @@ const productSchema = new mongoose.Schema(
             required: [true, 'Please provide product description'],
             maxlength: [2000, 'Description cannot exceed 2000 characters'],
         },
+        descriptionPoints: {
+            type: [String],
+            default: [],
+        },
         price: {
             type: Number,
             required: [true, 'Please provide product price'],

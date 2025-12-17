@@ -29,6 +29,7 @@ const AdminDashboard = () => {
     const [formData, setFormData] = useState({
         name: '',
         description: '',
+        descriptionPoints: [''],
         price: '',
         category: 'Electronics',
         brand: '',
@@ -229,6 +230,21 @@ const AdminDashboard = () => {
         setFormData({ ...formData, images: [...formData.images, ''] });
     };
 
+    const handleDescriptionPointChange = (index, value) => {
+        const newPoints = [...formData.descriptionPoints];
+        newPoints[index] = value;
+        setFormData({ ...formData, descriptionPoints: newPoints });
+    };
+
+    const addDescriptionPoint = () => {
+        setFormData({ ...formData, descriptionPoints: [...formData.descriptionPoints, ''] });
+    };
+
+    const removeDescriptionPoint = (index) => {
+        const newPoints = formData.descriptionPoints.filter((_, i) => i !== index);
+        setFormData({ ...formData, descriptionPoints: newPoints.length > 0 ? newPoints : [''] });
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
@@ -239,6 +255,7 @@ const AdminDashboard = () => {
                 price: parseFloat(formData.price),
                 stock: parseInt(formData.stock),
                 images: formData.images.filter(img => img.trim() !== ''),
+                descriptionPoints: formData.descriptionPoints.filter(point => point.trim() !== ''),
             };
 
             if (editingProduct) {
@@ -267,6 +284,7 @@ const AdminDashboard = () => {
         setFormData({
             name: product.name,
             description: product.description,
+            descriptionPoints: product.descriptionPoints && product.descriptionPoints.length > 0 ? product.descriptionPoints : [''],
             price: product.price.toString(),
             category: product.category,
             brand: product.brand || '',
@@ -292,6 +310,7 @@ const AdminDashboard = () => {
         setFormData({
             name: '',
             description: '',
+            descriptionPoints: [''],
             price: '',
             category: 'Electronics',
             brand: '',
@@ -493,6 +512,38 @@ const AdminDashboard = () => {
                                                 required
                                                 rows="4"
                                             />
+                                        </div>
+
+                                        <div className="form-group">
+                                            <label>Description Points (Optional)</label>
+                                            <small style={{ display: 'block', color: '#666', marginBottom: '0.5rem' }}>
+                                                Add key features or highlights as bullet points
+                                            </small>
+                                            {formData.descriptionPoints.map((point, index) => (
+                                                <div key={index} style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                                                    <input
+                                                        type="text"
+                                                        value={point}
+                                                        onChange={(e) => handleDescriptionPointChange(index, e.target.value)}
+                                                        placeholder="e.g., High-quality materials"
+                                                        className="image-input"
+                                                        style={{ flex: 1 }}
+                                                    />
+                                                    {formData.descriptionPoints.length > 1 && (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => removeDescriptionPoint(index)}
+                                                            className="btn-icon delete"
+                                                            style={{ padding: '0.5rem 1rem' }}
+                                                        >
+                                                            ✕
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            ))}
+                                            <button type="button" onClick={addDescriptionPoint} className="btn-add-image">
+                                                + Add Description Point
+                                            </button>
                                         </div>
 
                                         <div className="form-row">

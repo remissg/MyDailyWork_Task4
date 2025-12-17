@@ -188,6 +188,17 @@ const ProductDetails = () => {
                         <div className="product-description">
                             <h3>Description</h3>
                             <p>{product.description}</p>
+
+                            {product.descriptionPoints && product.descriptionPoints.length > 0 && (
+                                <div className="description-points">
+                                    <h4>Key Features</h4>
+                                    <ul>
+                                        {product.descriptionPoints.map((point, index) => (
+                                            <li key={index}>{point}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
                         </div>
 
                         <div className="product-actions">

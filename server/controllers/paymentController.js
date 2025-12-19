@@ -54,13 +54,16 @@ exports.createCheckoutSession = async (req, res) => {
             });
         }
 
+        // Determine client URL dynamically to support both localhost and production
+        const clientUrl = req.get('origin') || process.env.CLIENT_URL || 'https://buyhive-shop.vercel.app';
+
         // Create Stripe Checkout Session
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
             line_items: lineItems,
             mode: 'payment',
-            success_url: `${process.env.CLIENT_URL}/order-success?session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `${process.env.CLIENT_URL}/cart`,
+            success_url: `${clientUrl}/order-success?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${clientUrl}/cart`,
             customer_email: req.user.email,
             client_reference_id: req.user.id,
             metadata: {

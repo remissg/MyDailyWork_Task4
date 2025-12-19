@@ -52,6 +52,8 @@ const orderSchema = new mongoose.Schema(
                 required: true,
                 default: 'USA',
             },
+            name: String,
+            phone: String,
         },
         paymentInfo: {
             method: {

@@ -70,7 +70,7 @@ exports.createCheckoutSession = async (req, res) => {
             },
             payment_intent_data: {
                 shipping: {
-                    name: req.user.name,
+                    name: shippingAddress.name || req.user.name,
                     address: {
                         line1: shippingAddress.street,
                         city: shippingAddress.city,

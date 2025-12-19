@@ -13,6 +13,8 @@ const Checkout = () => {
     const [saveAddress, setSaveAddress] = useState(true);
 
     const [shippingAddress, setShippingAddress] = useState({
+        name: '',
+        phone: '',
         street: '',
         city: '',
         state: '',
@@ -29,13 +31,17 @@ const Checkout = () => {
     // Auto-fill address if available
     useEffect(() => {
         if (user?.addresses && user.addresses.length > 0) {
-            const lastAddress = user.addresses[user.addresses.length - 1]; // Use most recent
+            // Find default address or use the last one
+            const defaultAddr = user.addresses.find(addr => addr.isDefault) || user.addresses[user.addresses.length - 1];
+
             setShippingAddress({
-                street: lastAddress.street || '',
-                city: lastAddress.city || '',
-                state: lastAddress.state || '',
-                zipCode: lastAddress.zipCode || '',
-                country: lastAddress.country || 'India',
+                name: defaultAddr.name || user.name || '',
+                phone: defaultAddr.phone || user.phone || '',
+                street: defaultAddr.street || '',
+                city: defaultAddr.city || '',
+                state: defaultAddr.state || '',
+                zipCode: defaultAddr.zipCode || '',
+                country: defaultAddr.country || 'India',
             });
         }
     }, [user]);
@@ -235,6 +241,33 @@ const Checkout = () => {
                             </div>
 
                             <h3 style={{ marginTop: '2rem' }}>Shipping Address</h3>
+
+                            <div className="form-row">
+                                <div className="form-group">
+                                    <label htmlFor="shipping-name">Recipient Name</label>
+                                    <input
+                                        type="text"
+                                        id="shipping-name"
+                                        name="name"
+                                        value={shippingAddress.name}
+                                        onChange={handleAddressChange}
+                                        placeholder="Full Name (e.g. for gifting)"
+                                        required
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="shipping-phone">Recipient Phone</label>
+                                    <input
+                                        type="tel"
+                                        id="shipping-phone"
+                                        name="phone"
+                                        value={shippingAddress.phone}
+                                        onChange={handleAddressChange}
+                                        placeholder="Contact mobile"
+                                        required
+                                    />
+                                </div>
+                            </div>
 
                             <div className="form-group">
                                 <label htmlFor="street">Street Address</label>

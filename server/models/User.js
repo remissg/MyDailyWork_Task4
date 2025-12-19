@@ -38,6 +38,8 @@ const userSchema = new mongoose.Schema(
                 state: String,
                 zipCode: String,
                 country: String,
+                name: String, // Recipient Name
+                phone: String, // Recipient Phone
                 isDefault: {
                     type: Boolean,
                     default: false,

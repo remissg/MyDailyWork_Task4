@@ -6,7 +6,7 @@ import axios from 'axios';
 import './Profile.css';
 
 const Profile = () => {
-    const { user } = useAuth();
+    const { user, updateUser } = useAuth();
     const { showToast } = useToast();
 
     const [pageUser, setPageUser] = useState(user);
@@ -16,12 +16,13 @@ const Profile = () => {
     // Add Address State
     const [showAddAddress, setShowAddAddress] = useState(false);
     const [newAddress, setNewAddress] = useState({
+        name: '',
+        phone: '',
         street: '',
         city: '',
         state: '',
         zipCode: '',
         country: '',
-        phone: ''
     });
 
     // Profile Form State
@@ -61,6 +62,8 @@ const Profile = () => {
 
             const { data } = await axios.put('/api/auth/profile', formData, config);
             setPageUser(data.user);
+            updateUser(data.user);
+            localStorage.setItem('user', JSON.stringify(data.user));
             showToast('Profile updated successfully', 'success');
         } catch (error) {
             showToast(error.response?.data?.message || 'Failed to update profile', 'error');
@@ -79,19 +82,45 @@ const Profile = () => {
             };
 
             // Append new address to existing list
-            const updatedAddresses = [...(pageUser.addresses || []), newAddress];
+            const isFirstAddress = !pageUser.addresses || pageUser.addresses.length === 0;
+            const addressToSave = { ...newAddress, isDefault: isFirstAddress };
+            const updatedAddresses = [...(pageUser.addresses || []), addressToSave];
 
             const { data } = await axios.put('/api/auth/profile', { addresses: updatedAddresses }, config);
 
             setPageUser(data.user);
+            updateUser(data.user);
+            localStorage.setItem('user', JSON.stringify(data.user));
             setShowAddAddress(false);
-            setNewAddress({ street: '', city: '', state: '', zipCode: '', country: '', phone: '' }); // Reset form
+            setNewAddress({ name: '', phone: '', street: '', city: '', state: '', zipCode: '', country: '' }); // Reset form
             showToast('Address added successfully', 'success');
 
         } catch (error) {
             showToast(error.response?.data?.message || 'Failed to add address', 'error');
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleSetDefaultAddress = async (addressId) => {
+        try {
+            const updatedAddresses = pageUser.addresses.map(addr => ({
+                ...addr,
+                isDefault: addr._id === addressId
+            }));
+
+            const token = localStorage.getItem('token');
+            const config = {
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+            };
+
+            const { data } = await axios.put('/api/auth/profile', { addresses: updatedAddresses }, config);
+            setPageUser(data.user);
+            updateUser(data.user);
+            localStorage.setItem('user', JSON.stringify(data.user));
+            showToast('Default address updated', 'success');
+        } catch (error) {
+            showToast(error.response?.data?.message || 'Failed to update default address', 'error');
         }
     };
 
@@ -107,6 +136,8 @@ const Profile = () => {
 
             const { data } = await axios.put('/api/auth/profile', { addresses: updatedAddresses }, config);
             setPageUser(data.user);
+            updateUser(data.user);
+            localStorage.setItem('user', JSON.stringify(data.user));
             showToast('Address deleted', 'success');
         } catch (error) {
             showToast(error.response?.data?.message || 'Failed to delete address', 'error');
@@ -219,6 +250,32 @@ const Profile = () => {
                             <div className="add-address-form">
                                 <h3>New Address Details</h3>
                                 <form onSubmit={handleAddAddress}>
+                                    <div className="form-row">
+                                        <div className="form-group">
+                                            <label>Recipient Name</label>
+                                            <input
+                                                type="text"
+                                                name="name"
+                                                value={newAddress.name}
+                                                onChange={handleAddressChange}
+                                                className="form-input"
+                                                required
+                                                placeholder="Full Name"
+                                            />
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Contact Number</label>
+                                            <input
+                                                type="tel"
+                                                name="phone"
+                                                value={newAddress.phone}
+                                                onChange={handleAddressChange}
+                                                className="form-input"
+                                                required
+                                                placeholder="10-digit mobile"
+                                            />
+                                        </div>
+                                    </div>
                                     <div className="form-group">
                                         <label>Street Address</label>
                                         <input
@@ -279,16 +336,7 @@ const Profile = () => {
                                             />
                                         </div>
                                     </div>
-                                    <div className="form-group">
-                                        <label>Phone Number (Optional)</label>
-                                        <input
-                                            type="tel"
-                                            name="phone"
-                                            value={newAddress.phone}
-                                            onChange={handleAddressChange}
-                                            className="form-input"
-                                        />
-                                    </div>
+
                                     <div className="form-actions">
                                         <button type="submit" className="btn-save" disabled={loading}>
                                             {loading ? 'Saving...' : 'Save Address'}
@@ -309,21 +357,33 @@ const Profile = () => {
                         {pageUser.addresses && pageUser.addresses.length > 0 ? (
                             <div className="address-grid">
                                 {pageUser.addresses.map((addr) => (
-                                    <div key={addr._id} className="address-card">
-                                        <div className="address-type-badge">Home</div>
+                                    <div key={addr._id} className={`address-card ${addr.isDefault ? 'default' : ''}`}>
+                                        <div className="address-type-badge">
+                                            {addr.isDefault ? 'Default' : 'Home'}
+                                        </div>
                                         <div className="address-details">
-                                            <h4>{pageUser.name}</h4>
+                                            <h4>{addr.name || pageUser.name}</h4>
                                             <p>{addr.street}</p>
                                             <p>{addr.city}, {addr.state} {addr.zipCode}</p>
                                             <p>{addr.country}</p>
                                             {addr.phone && <p>📞 {addr.phone}</p>}
                                         </div>
-                                        <button
-                                            className="btn-delete"
-                                            onClick={() => handleDeleteAddress(addr._id)}
-                                        >
-                                            Remove Address
-                                        </button>
+                                        <div className="address-actions">
+                                            {!addr.isDefault && (
+                                                <button
+                                                    className="btn-set-default"
+                                                    onClick={() => handleSetDefaultAddress(addr._id)}
+                                                >
+                                                    Set as Default
+                                                </button>
+                                            )}
+                                            <button
+                                                className="btn-delete"
+                                                onClick={() => handleDeleteAddress(addr._id)}
+                                            >
+                                                Remove Address
+                                            </button>
+                                        </div>
                                     </div>
                                 ))}
                             </div>

@@ -71,7 +71,17 @@ exports.createOrder = async (req, res) => {
                 );
 
                 if (!addressExists) {
-                    user.addresses.push(shippingAddress);
+                    const addressToSave = {
+                        street: shippingAddress.street,
+                        city: shippingAddress.city,
+                        state: shippingAddress.state,
+                        zipCode: shippingAddress.zipCode,
+                        country: shippingAddress.country,
+                        name: shippingAddress.name,
+                        phone: shippingAddress.phone,
+                        isDefault: user.addresses.length === 0
+                    };
+                    user.addresses.push(addressToSave);
                     await user.save();
                 }
             }

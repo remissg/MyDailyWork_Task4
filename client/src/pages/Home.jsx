@@ -39,7 +39,7 @@ const Home = () => {
             {/* Hero Section */}
             <section className="hero">
                 <div className="hero-content">
-                    <h1 className="hero-title">Welcome to E-Shop</h1>
+                    <h1 className="hero-title">Welcome to BuyHive</h1>
                     <p className="hero-subtitle">Discover amazing products at unbeatable prices</p>
                     <Link to="/products" className="btn-hero">Shop Now</Link>
                 </div>

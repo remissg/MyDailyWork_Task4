@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
+import { useCart } from '../context/CartContext';
 import './OrderSuccess.css';
 
 const OrderSuccess = () => {
